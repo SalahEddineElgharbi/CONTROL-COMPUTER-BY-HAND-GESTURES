@@ -1,0 +1,67 @@
+# gesture control python program for controlling certain functions in windows pc
+import serial                #add Serial library for serial communication
+import pyautogui             #add pyautogui library for programmatically controlling the mouse and keyboard.
+from pynput.keyboard import Controller
+from grphics import *
+
+
+Arduino_Serial = serial.Serial('COM4', 9600)  #Initialize serial and Create Serial port object called Arduino_Serial
+
+while 1:
+ incoming = Arduino_Serial.readline().decode().strip()             #read the serial data and print it as line
+ print(incoming)
+ # ////////////////////////////////////////////////////////////  function recherech
+ def controlKyboard():
+   pyautogui.click(97, 1055)
+   Keyboard = Controller()
+   Keyboard.type("Final project")
+   pyautogui.press('enter')
+   #pyautogui.moveTo(255,389)
+   #spyautogui.press('enter')    //// il faut vues cette action 
+
+ #################################################################################
+
+ if 'Find' in incoming:
+    controlKyboard()
+    
+ if 'Play/Pause' in incoming:
+    pyautogui.press('space')
+ 
+
+ if 'Rewind' in incoming:
+    hotkey = pyautogui.hotkey('ctrl', 'left')
+    ##main3()
+ if 'Forward' in incoming:
+    pyautogui.hotkey('ctrl', 'right')
+    ##main4()
+ if 'Vup' in incoming:
+    pyautogui.hotkey('ctrl', 'up')
+ 
+ if 'Vdown' in incoming:
+    pyautogui.hotkey('ctrl', 'down')
+   
+ if 'Copy' in incoming:
+    pyautogui.hotkey('ctrl', 'c')          # ctrl-c to copy
+  
+ if 'Paste' in incoming:
+    pyautogui.hotkey('ctrl', 'v')          # ctrl-v to paste
+    
+ if 'Click' in incoming:
+    pyautogui.doubleClick()
+  
+ if 'down' in incoming:                        # if incoming data is 'down'
+    pyautogui.scroll(-100)
+
+ if 'up' in incoming:                    #     if incoming data is 'up'
+    pyautogui.scroll(100)
+
+ if 'delete' in incoming:
+    pyautogui.press('delete')
+    
+ if 'zommUp' in incoming:
+    pyautogui.hotkey('ctrl', '+')
+    
+ if 'zoomdown' in incoming:
+    pyautogui.hotkey('ctrl', '-')
+    
+incoming = "";

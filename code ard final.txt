@@ -1,0 +1,137 @@
+const int trigger1 = 2; //Trigger pin of 1st Sesnor
+const int echo1 = 3; //Echo pin of 1st Sesnor
+const int trigger2 = 4; //Trigger pin of 2nd Sesnor
+const int echo2 = 5;//Echo pin of 2nd Sesnor
+
+long time_taken;  
+int dist,distL,distR;
+
+void setup() {
+Serial.begin(9600); //vitesse de transmission en bauds  
+pinMode(trigger1, OUTPUT); //set the digitale pin trigger 1 as an output
+pinMode(echo1, INPUT); // set the digital pin echo1 as an input 
+pinMode(trigger2, OUTPUT); 
+pinMode(echo2, INPUT);  
+}
+      
+/*###Function to calculate distance###*/
+void calculate_distance(int trigger, int echo)
+{
+digitalWrite(trigger, LOW);//sets the digital pin trigger off 
+delayMicroseconds(2);//  waits for 2ms
+digitalWrite(trigger, HIGH);//sets the digital pin trigger on  
+delayMicroseconds(10);//waits for 10ms
+digitalWrite(trigger, LOW);// sets the digital pin off again
+
+time_taken = pulseIn(echo, HIGH);//lit une impulsion sur la broche echo:hight---attendre que echo passe de low a high pr commencer le chronometrage//renvoie la dure de l'impulsion en ms
+dist= time_taken*0.034/2;
+if (dist>60)
+dist = 60;
+}
+////////////////////////----------------------------------------------------/////////////////
+void loop() { 
+calculate_distance(trigger1,echo1);
+distL =dist; //get distance of left sensor
+
+calculate_distance(trigger2,echo2);
+distR =dist; //get distance of right sensor
+
+//Uncomment for debudding
+Serial.print("Dist_Left=");
+Serial.println(distL);
+Serial.print("dist_Right=");
+Serial.println(distR);
+
+////////////// Left one  06 Function   /////////////////////////////
+
+if ((distL >0 ) && (distL <10)) //Detect both hands  <<<<<<<<<<<<<<<<<<<<<<<  c bon 
+{Serial.println("Play/Pause"); /// vlc
+ Serial.println("delete");
+ delay (1500);      /// texte 
+}
+
+calculate_distance(trigger1,echo1);
+distL =dist;
+
+calculate_distance (trigger2,echo2);
+distR =dist;
+//Control Modes
+if (distL>15 && distL<=40)
+{  Serial.println("Copy"); delay (500); ///  texte 
+  calculate_distance(trigger1,echo1);
+  distL =dist;
+    while(distL<=40)
+    { 
+      calculate_distance(trigger1,echo1);
+      distL =dist;
+      if (distL>28) //Hand pushed in 
+      {Serial.println ("Vup"); delay (300);}     /// vlc ++ volume and up page in pdf  and change photo
+      if (distL<25) //Hand pulled out
+      {Serial.println ("Vdown"); delay (300);}   /// vlc -- volume and down  page in pdf  and change photo 
+    } 
+
+
+  }
+  
+  if (distL>45 && distL<60)
+{   Serial.println("down");       /// mouse  down down -- 
+}
+    ///  >>>>>>  last one because prplm in pc  about controling  
+ 
+  calculate_distance(trigger2,echo2);
+////////////// Right one  05 Function   /////////////////////////////////
+  distR =dist;
+    if (distR>=0 && distR<10)
+  {        
+        Serial.println("Click"); delay (100); //// open vedeo teste 
+   }calculate_distance(trigger2,echo2);
+  distR =dist;
+  if (distR>=15 && distR<25)
+  {
+        Serial.println("Find"); delay (100); //// image 
+  }
+  /////////////  nb Que il faut un video plus grand pour evite prplm ...    
+  if (distR>30 && distR<60)
+  {     Serial.println("Paste"); delay (500); //// texte 
+        Serial.println("up");       /// mouse  down down -- 
+  calculate_distance(trigger2,echo2);
+  distR =dist;   
+    while(distR<60) //////////////////  texte (up and down) vlc rewinde and forward vedeo in the time play
+    {
+      calculate_distance(trigger2,echo2);
+      distR =dist;
+      if (distR<40) //Right hand pushed in
+      {Serial.println ("Rewind"); delay (3000);}
+      if (distR>45) //Right hand pulled out
+      {Serial.println ("Forward"); delay (3000);}
+  }
+  }
+ ////////////// Right and Left   05 fonction   /////////////////////////////////
+  
+calculate_distance(trigger1,echo1);
+distL =dist;
+
+calculate_distance(trigger2,echo2);
+distR =dist;
+ if ( (distR<15 && 0<distR) && (distL<15 && distL>0)) 
+  {
+ Serial.println("zoomdown"); delay (300);     /// texte , image 
+  calculate_distance(trigger1,echo1);
+  distL =dist;
+   calculate_distance(trigger2,echo2);
+  distR =dist;
+  }
+  if ((distR<35 && 20<distR)&& (distL<35 && distL>20)) 
+  {
+ Serial.println("zoomUp"); delay (300);  /// texte , image 
+
+  }
+  
+if ( (distR<60 && 40<distR) && (distL>40 && distL<60)) 
+  {
+    
+  }
+delay(1000);
+}
+ 
+ 
